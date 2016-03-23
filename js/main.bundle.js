@@ -35238,7 +35238,7 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
     setMass() {
       if (this.ball.mine) {
         if (!this.mass) {
-          this.mass = new PIXI.Text(this.ball.size, {
+          this.mass = new PIXI.Text(this.ball.mass, {
             font: 'bold 20pt Arial',
             fill: 0xFFFFFF,
             stroke: 0x000000,
@@ -35259,7 +35259,7 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
       }
     }
     updateMass() {
-      this.mass.text = this.ball.size;
+      this.mass.text = this.ball.mass;
       this.mass.resolution = 10;
       this.mass.scale.x = this.mass.scale.y *= 0.5 / this.mass.width;
       this.mass.position.x = -this.mass.width / 2;
