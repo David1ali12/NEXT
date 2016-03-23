@@ -35180,11 +35180,11 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
       });
       this.ball.on('disappear', () => this.disappear());
       this.ball.on('move', (oldX, oldY, newX, newY) => {
-        this.x.set(newX, 100);
-        this.y.set(newY, 100);
+        this.x.set(newX, 120);
+        this.y.set(newY, 120);
       });
       this.ball.on('resize', (oldSize, newSize) => {
-        this.s.set(newSize, 100);
+        this.s.set(newSize, 120);
         this.main.zSort(newSize);
       });
     }
@@ -35199,8 +35199,8 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
       this.main.stage.addChild(this.container);
     }
     disappear() {
-      this.s.set(0, 100);
-      setTimeout(() => this.main.stage.removeChild(this.container), 100);
+      this.s.write(0);
+      this.main.stage.removeChild(this.container);
     }
     shape() {
       this.graphic.clear();
@@ -35772,8 +35772,8 @@ $__System.registerDynamic("ec", ["4d", "e5", "e6", "e7", "e8", "ea", "40"], true
         p += ball.size;
       }
       if (p > 0) {
-        this.cam.x.set(x / p, 100);
-        this.cam.y.set(y / p, 100);
+        this.cam.x.set(x / p, 120);
+        this.cam.y.set(y / p, 120);
         this.cam.s.set(Math.pow(Math.min(64 / p, 1), 0.4) * this.defaultScale(), 500);
       } else if (this.homeview) {
         this.cam.s.write(this.defaultScale());
