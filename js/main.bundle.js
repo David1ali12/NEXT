@@ -11793,7 +11793,7 @@ _removeDefine();
 $__System.register('47', ['46'], function (_export) {
   'use strict';
 
-  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, createBtn, region, gameMode, token;
+  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, spectateBtn, createBtn, region, gameMode, token;
   return {
     setters: [function (_) {
       $ = _['default'];
@@ -11806,6 +11806,7 @@ $__System.register('47', ['46'], function (_export) {
       nick = mainPanel.find('input#nick');
       playBtn = mainPanel.find('button#playBtn');
       joinBtn = mainPanel.find('button#joinBtn');
+      spectateBtn = mainPanel.find('button#spectateBtn');
       createBtn = mainPanel.find('button#createBtn');
       region = mainPanel.find('#region');
       gameMode = mainPanel.find('#gameMode');
@@ -11822,7 +11823,8 @@ $__System.register('47', ['46'], function (_export) {
         gameMode: gameMode,
         token: token,
         joinBtn: joinBtn,
-        createBtn: createBtn
+        createBtn: createBtn,
+        spectateBtn: spectateBtn
       });
     }
   };
@@ -19512,6 +19514,11 @@ $__System.register('4c', ['2', '8', '9', '44', '47', '4b'], function (_export) {
             dom.joinBtn.click(this.joinRoom.bind(this));
             dom.createBtn.click(this.createRoom.bind(this));
 
+            dom.spectateBtn.click(function () {
+              _this2.client.spectate();
+              dom.overlay.hide();
+            });
+
             dom.region.change(this.createRoom.bind(this));
             dom.gameMode.change(this.createRoom.bind(this));
           }
@@ -19577,6 +19584,11 @@ $__System.register('4c', ['2', '8', '9', '44', '47', '4b'], function (_export) {
             this.server.ws = ws;
             this.server.token = token;
             this.client.connect('ws://' + ws, token);
+          }
+        }, {
+          key: 'spectate',
+          value: function spectate() {
+            this.client.spectate();
           }
         }, {
           key: 'connectHandler',
@@ -35681,6 +35693,10 @@ $__System.registerDynamic("ec", ["4d", "e5", "e6", "e7", "e8", "ea", "40"], true
           this.updateBorders();
         }
       });
+      client.on('spectateFieldUpdate', (x, y, zoom) => {
+        this.cam.x.set(x, 120);
+        this.cam.y.set(y, 120);
+      });
       window.addEventListener('resize', () => this.updateSize());
       window.addEventListener('wheel', (e) => this.modifyZoom(e.deltaY));
     }
@@ -35835,6 +35851,8 @@ $__System.registerDynamic("ed", [], true, function($__require, exports, module) 
           this.client.eject();
         } else if (e.keyCode == 32) {
           this.client.split();
+        } else if (e.keyCode == 81) {
+          this.client.spectateModeToggle();
         }
       });
       window.addEventListener('keyup', (e) => {
