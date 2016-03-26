@@ -35204,6 +35204,7 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
       this.x.write(this.ball.x);
       this.y.write(this.ball.y);
       this.s.write(this.ball.size);
+      this.initSize = this.ball.size;
       this.shape();
       this.setName();
       this.setMass();
@@ -35217,14 +35218,14 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
     shape() {
       this.graphic.clear();
       this.graphic.beginFill(this.ball.virus ? 0x33FF33 : this.ball.color.replace('#', '0x'), 1);
-      this.graphic.drawCircle(0, 0, 1);
+      this.graphic.drawCircle(0, 0, this.initSize);
       this.graphic.endFill();
     }
     setName() {
       if (this.ball.name) {
         if (!this.name) {
           this.name = new PIXI.Text(this.ball.name, {
-            font: 'bold 20pt Ubuntu',
+            font: `bold ${this.initSize * 0.35}pt Ubuntu`,
             fill: 0xFFFFFF,
             stroke: 0x000000,
             strokeThickness: 2
@@ -35235,15 +35236,14 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
         this.container.addChild(this.name);
       } else {
         if (this.name) {
-          this.container.removeChild(this.text);
+          this.container.removeChild(this.name);
           this.ball.removeAllListener('rename');
-          delete this.text;
+          delete this.name;
         }
       }
     }
     updateName() {
-      this.name.resolution = 10;
-      this.name.scale.x = this.name.scale.y *= 2 * 0.9 / this.name.width;
+      this.name.resolution = 1;
       this.name.position.x = -this.name.width / 2;
       this.name.position.y = -this.name.height / 2;
     }
@@ -35251,7 +35251,7 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
       if (this.ball.mine) {
         if (!this.mass) {
           this.mass = new PIXI.Text(this.ball.mass, {
-            font: 'bold 20pt Ubuntu',
+            font: `bold ${this.initSize * 0.35}pt Ubuntu`,
             fill: 0xFFFFFF,
             stroke: 0x000000,
             strokeThickness: 2
@@ -35272,15 +35272,14 @@ $__System.registerDynamic("e7", ["e5", "e6"], true, function($__require, exports
     }
     updateMass() {
       this.mass.text = this.ball.mass;
-      this.mass.resolution = 10;
-      this.mass.scale.x = this.mass.scale.y *= 0.5 / this.mass.width;
+      this.mass.resolution = 1;
       this.mass.position.x = -this.mass.width / 2;
       this.mass.position.y = this.name ? this.name.height / 2 : 0;
     }
     render() {
       this.container.position.x = this.x.get();
       this.container.position.y = this.y.get();
-      this.container.scale.x = this.container.scale.y = this.s.get();
+      this.container.scale.x = this.container.scale.y = this.s.get() / this.initSize;
     }
   }
   module.exports = BallView;
