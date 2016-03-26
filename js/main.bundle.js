@@ -335,6 +335,26 @@ $__System.register('a', ['8', '9'], function (_export) {
               }
             });
           }
+        }, {
+          key: 'fetchInfo',
+          value: function fetchInfo(callback) {
+            var req = new XMLHttpRequest();
+
+            req.open('GET', 'http://m.agar.io/info');
+            req.send();
+            req.addEventListener('load', function () {
+              if (req.status == 200) {
+                var json = undefined;
+                try {
+                  json = JSON.parse(req.responseText);
+                } catch (e) {
+                  return callback(new Error('Failed to fetch info: invalid JSON'));
+                }
+                return callback(null, json);
+              }
+              return callback(new Error('Failed to fetch info, status code: ' + req.status));
+            });
+          }
         }]);
 
         return Server;
@@ -11793,7 +11813,7 @@ _removeDefine();
 $__System.register('47', ['46'], function (_export) {
   'use strict';
 
-  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, spectateBtn, createBtn, region, gameMode, token;
+  var $, overlay, mainPanel, leaderBoard, statusBox, nick, playBtn, joinBtn, spectateBtn, createBtn, region, regionOptions, gameMode, token;
   return {
     setters: [function (_) {
       $ = _['default'];
@@ -11809,6 +11829,7 @@ $__System.register('47', ['46'], function (_export) {
       spectateBtn = mainPanel.find('button#spectateBtn');
       createBtn = mainPanel.find('button#createBtn');
       region = mainPanel.find('#region');
+      regionOptions = region.find('option');
       gameMode = mainPanel.find('#gameMode');
       token = mainPanel.find('#token');
 
@@ -11820,6 +11841,7 @@ $__System.register('47', ['46'], function (_export) {
         nick: nick,
         playBtn: playBtn,
         region: region,
+        regionOptions: regionOptions,
         gameMode: gameMode,
         token: token,
         joinBtn: joinBtn,
@@ -19499,6 +19521,7 @@ $__System.register('4c', ['2', '8', '9', '44', '47', '4b'], function (_export) {
           this.initDomEventHandlers();
           this.initKeyboardEventHandlers();
           this.initGameEventHandlers();
+          this.updatePlayerNumbers();
         }
 
         _createClass(Controller, [{
@@ -19566,6 +19589,18 @@ $__System.register('4c', ['2', '8', '9', '44', '47', '4b'], function (_export) {
               });
 
               dom.leaderBoard.html(leaderBoards.join('\n'));
+            });
+          }
+        }, {
+          key: 'updatePlayerNumbers',
+          value: function updatePlayerNumbers() {
+            AgarioClient.Server.fetchInfo(function (err, info) {
+              if (err) return err;
+              dom.regionOptions.each(function (n, elem) {
+                elem.text = elem.text.split(' (')[0];
+                var numPlayers = (info.regions[elem.value] || {}).numPlayers;
+                if (typeof numPlayers === 'number') elem.text += ' (' + numPlayers + ' players)';
+              });
             });
           }
         }, {
