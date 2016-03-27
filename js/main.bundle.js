@@ -19595,8 +19595,6 @@ $__System.register('4b', ['7', '8', '43', '46', '4a'], function (_export) {
         }, {
           key: 'connect',
           value: function connect(ws, token) {
-            this.server.ws = ws;
-            this.server.token = token;
             this.client.connect('ws://' + ws, token);
           }
         }, {
@@ -35217,7 +35215,7 @@ $__System.registerDynamic("e6", ["e4", "e5"], true, function($__require, exports
     appear() {
       this.x.write(this.ball.x);
       this.y.write(this.ball.y);
-      this.s.write(this.ball.size);
+      this.size.write(this.ball.size);
       this.initSize = this.ball.size;
       this.shape();
       this.setName();
@@ -35293,7 +35291,7 @@ $__System.registerDynamic("e6", ["e4", "e5"], true, function($__require, exports
     render() {
       this.container.position.x = this.x.get();
       this.container.position.y = this.y.get();
-      this.container.scale.x = this.container.scale.y = this.s.get() / this.initSize;
+      this.container.scale.x = this.container.scale.y = this.size.get() / this.initSize;
     }
   }
   module.exports = BallView;
