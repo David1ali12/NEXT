@@ -35193,13 +35193,15 @@ $__System.registerDynamic("e6", ["e4", "e5"], true, function($__require, exports
             this.y.follow(() => eater.y.get(), 100);
             setTimeout(() => {
               this.disappear();
-              delete this.main.balls[this.ball.id];
+              this.destroy();
             }, 50);
           } else {
             this.disappear();
+            this.destroy();
           }
         } else {
           this.disappear();
+          this.destroy();
         }
       });
       this.ball.on('disappear', () => this.disappear());
@@ -35209,8 +35211,21 @@ $__System.registerDynamic("e6", ["e4", "e5"], true, function($__require, exports
       });
       this.ball.on('resize', (oldSize, newSize) => {
         this.size.set(newSize, 120);
-        this.main.zSort(newSize);
+        this.container.zIndex = newSize;
+        this.main.reSort = true;
       });
+      this.container.zIndex = this.ball.size;
+      this.container.ballId = this.ball.id;
+    }
+    destroy() {
+      this.main.stage.removeChild(this.container);
+      this.graphic.destroy();
+      if (this.name)
+        this.name.destroy();
+      if (this.mass)
+        this.mass.destroy();
+      this.container.destroy();
+      delete this.main.balls[this.ball.id];
     }
     appear() {
       this.x.write(this.ball.x);
@@ -35220,8 +35235,8 @@ $__System.registerDynamic("e6", ["e4", "e5"], true, function($__require, exports
       this.shape();
       this.setName();
       this.setMass();
-      this.main.zSort(this.ball.size);
       this.main.stage.addChild(this.container);
+      this.main.reSort = true;
     }
     disappear() {
       this.size.write(0);
@@ -35684,6 +35699,7 @@ $__System.registerDynamic("eb", ["4c", "e4", "e5", "e6", "e7", "e9", "3f"], true
       super();
       this.client = client;
       this.balls = {};
+      this.reSort = false;
       this.addRenderer();
       this.addStats();
       this.mapSize = MapSize.default();
@@ -35753,6 +35769,7 @@ $__System.registerDynamic("eb", ["4c", "e4", "e5", "e6", "e7", "e9", "3f"], true
     updateBorders() {
       if (!this.borders) {
         this.borders = new PIXI.Graphics();
+        this.borders.zIndex = -1;
         this.stage.addChild(this.borders);
       }
       this.borders.clear();
@@ -35768,18 +35785,8 @@ $__System.registerDynamic("eb", ["4c", "e4", "e5", "e6", "e7", "e9", "3f"], true
       this.stats.domElement.style.top = '0px';
       document.body.appendChild(this.stats.domElement);
     }
-    zSort(at) {
-      if (!at) {
-        at = 0;
-      }
-      const keys = Object.keys(this.balls);
-      keys.sort((a, b) => this.balls[a].ball.size - this.balls[b].ball.size);
-      for (const keyOffset in keys) {
-        const ball = this.balls[keys[keyOffset]];
-        if (ball.ball.size >= at) {
-          ball.container.bringToFront();
-        }
-      }
+    zSort() {
+      this.stage.children.sort((a, b) => a.zIndex === b.zIndex ? a.ballId - b.ballId : a.zIndex - b.zIndex);
     }
     posCamera() {
       let sumX,
@@ -35818,6 +35825,8 @@ $__System.registerDynamic("eb", ["4c", "e4", "e5", "e6", "e7", "e9", "3f"], true
     }
     animate() {
       this.stats.begin();
+      if (this.reSort)
+        this.zSort();
       this.render();
       this.posCamera();
       this.stage.scale.x = this.stage.scale.y = this.cam.s.get() * Math.pow(2, this.cam.z.get());
